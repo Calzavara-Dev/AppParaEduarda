@@ -26,6 +26,9 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
   const cleanText = (str) => {
     if (!str) return '';
     return str
+      .replace(/RASCUNHO\s*www\.pciconcursos\.com\.br[\s\S]*/gi, '') // Remove marca d'agua multi-linha
+      .replace(/www\.pciconcursos\.com\.br[\s\S]*/gi, '') 
+      .replace(/pcimarkpci[\s\S]*/gi, '') 
       .replace(/-\n/g, '') // Junta palavras separadas por hífen no final da linha
       .replace(/\n/g, ' ') // Troca quebra de linha por espaço
       .replace(/\s+/g, ' ') // Remove espaços duplicados
