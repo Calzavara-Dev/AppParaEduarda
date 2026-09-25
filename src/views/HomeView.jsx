@@ -58,7 +58,11 @@ const HomeView = ({ questoes, loading, stats, onAnswer }) => {
       </div>
 
       {/* Search & Filters */}
-      <FilterBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <FilterBar 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery} 
+        onFilterClick={() => alert('Em breve: Filtros avanados por Banca, Ano, Cargo e rgao!')}
+      />
 
       {/* Questions Section Title */}
       <h3 style={{ marginTop: '10px', color: 'var(--text-dark)', fontSize: '1.2rem' }}>Questões Recentes</h3>
