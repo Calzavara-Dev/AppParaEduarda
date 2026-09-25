@@ -23,6 +23,8 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
         onAnswer(index === correta);
       }
     }
+  };
+
   const cleanText = (str) => {
     if (!str) return '';
     return str
