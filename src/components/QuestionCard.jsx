@@ -23,8 +23,6 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
         onAnswer(index === correta);
       }
     }
-  };
-
   const cleanText = (str) => {
     if (!str) return '';
     return str
@@ -32,6 +30,14 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
       .replace(/\n/g, ' ') // Troca quebra de linha por espaço
       .replace(/\s+/g, ' ') // Remove espaços duplicados
       .trim();
+  };
+
+  const cleanAltText = (str) => {
+    let cleaned = cleanText(str);
+    // Remove prefixos como "(A) ", "(B) ", "A) ", "B) " que vieram grudados na extração
+    cleaned = cleaned.replace(/^\s*\([A-Ea-e]\)\s*/, '');
+    cleaned = cleaned.replace(/^\s*[A-Ea-e]\)\s*/, '');
+    return cleaned;
   };
 
   return (
@@ -72,8 +78,6 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
             bg = 'rgba(239, 68, 68, 0.1)';
             border = '1px solid #EF4444';
             icon = <XCircle size={18} color="#EF4444" />;
-          } else if (isSelected) {
-             // Shouldn't happen unless not validated yet
           }
 
           return (
@@ -109,7 +113,7 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
               }}>
                 {String.fromCharCode(65 + index)}
               </div>
-              <span style={{ flex: 1, lineHeight: '1.4' }}>{cleanText(alt)}</span>
+              <span style={{ flex: 1, lineHeight: '1.4' }}>{cleanAltText(alt)}</span>
               {icon && <div style={{ flexShrink: 0 }}>{icon}</div>}
             </button>
           )
