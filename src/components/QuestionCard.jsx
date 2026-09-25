@@ -127,18 +127,30 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
 
       {/* Actions */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px', paddingTop: '16px', borderTop: '1px solid var(--bg-color)' }}>
-        <button style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.85rem' }}>
+        <button 
+          onClick={() => {
+            if (selected === null) {
+              alert('Resolva a questão primeiro para liberar os comentários!');
+              return;
+            }
+            setShowExplanation(!showExplanation);
+          }}
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '6px', 
+            background: 'none', 
+            border: 'none', 
+            color: showExplanation ? 'var(--primary)' : 'var(--text-muted)', 
+            cursor: 'pointer', 
+            fontSize: '0.85rem',
+            fontWeight: '500',
+            transition: 'all 0.2s'
+          }}
+        >
           <MessageCircle size={16} />
-          Comentários (12)
+          {explicacao ? 'Comentário do Professor' : 'Gabarito Comentado'}
         </button>
-        {selected !== null && explicacao && (
-          <button 
-            onClick={() => setShowExplanation(!showExplanation)}
-            style={{ background: 'var(--primary-gradient)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '12px', fontWeight: '500', cursor: 'pointer' }}
-          >
-            {showExplanation ? 'Ocultar Explicação' : 'Ver Explicação'}
-          </button>
-        )}
       </div>
 
       {/* Explanation Box */}
@@ -154,8 +166,8 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
           lineHeight: '1.6',
           whiteSpace: 'pre-wrap'
         }}>
-          <strong>Explicação:</strong><br />
-          {explicacao}
+          <strong>Comentário:</strong><br />
+          {explicacao ? cleanText(explicacao) : 'Esta questão ainda não possui comentário do professor.'}
         </div>
       )}
 
