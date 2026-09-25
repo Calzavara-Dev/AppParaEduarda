@@ -25,6 +25,15 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
     }
   };
 
+  const cleanText = (str) => {
+    if (!str) return '';
+    return str
+      .replace(/-\n/g, '') // Junta palavras separadas por hífen no final da linha
+      .replace(/\n/g, ' ') // Troca quebra de linha por espaço
+      .replace(/\s+/g, ' ') // Remove espaços duplicados
+      .trim();
+  };
+
   return (
     <div className="surface animate-fade-in" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
       
@@ -41,7 +50,7 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
 
       {/* Question Text */}
       <div style={{ color: 'var(--text-dark)', fontSize: '0.95rem', lineHeight: '1.6', fontWeight: '400', whiteSpace: 'pre-wrap', marginBottom: '8px' }}>
-        {texto}
+        {cleanText(texto)}
       </div>
 
       {/* Options */}
@@ -100,7 +109,7 @@ const QuestionCard = ({ banca, ano, orgao, disciplina, texto, alternativas, corr
               }}>
                 {String.fromCharCode(65 + index)}
               </div>
-              <span style={{ flex: 1, lineHeight: '1.4' }}>{alt}</span>
+              <span style={{ flex: 1, lineHeight: '1.4' }}>{cleanText(alt)}</span>
               {icon && <div style={{ flexShrink: 0 }}>{icon}</div>}
             </button>
           )
