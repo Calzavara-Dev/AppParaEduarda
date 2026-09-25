@@ -6,6 +6,14 @@ import QuestionCard from '../components/QuestionCard';
 const HomeView = ({ questoes, loading, stats, onAnswer }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Todas');
+  
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    banca: '',
+    ano: '',
+    cargo: '',
+    orgao: ''
+  });
 
   const accuracy = stats.answered > 0 ? Math.round((stats.correct / stats.answered) * 100) : 0;
   // Extrai as disciplinas unicas do banco, garantindo que 'Todas' seja a primeira
@@ -13,6 +21,18 @@ const HomeView = ({ questoes, loading, stats, onAnswer }) => {
     new Set(questoes.filter(q => q.disciplina).map(q => q.disciplina))
   );
   const categorias = ['Todas', ...disciplinasUnicas];
+
+  const getUniqueValues = (key) => {
+    return Array.from(new Set(questoes.filter(q => q[key]).map(q => q[key]))).sort();
+  };
+
+  const updateFilter = (key, value) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const clearFilters = () => {
+    setFilters({ banca: '', ano: '', cargo: '', orgao: '' });
+  };
 
   return (
     <main className="view-content">
@@ -61,8 +81,36 @@ const HomeView = ({ questoes, loading, stats, onAnswer }) => {
       <FilterBar 
         searchQuery={searchQuery} 
         setSearchQuery={setSearchQuery} 
-        onFilterClick={() => alert('Em breve: Filtros avanados por Banca, Ano, Cargo e rgao!')}
+        onFilterClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
       />
+
+      {/* Advanced Filters Panel */}
+      {showAdvancedFilters && (
+        <div className="surface animate-fade-in" style={{ marginTop: '10px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--text-dark)' }}>Filtros Avançados</span>
+            <button onClick={clearFilters} style={{ background: 'none', border: 'none', color: 'var(--primary)', fontSize: '0.8rem', cursor: 'pointer', fontWeight: '500' }}>Limpar Filtros</button>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <select className="filter-select" value={filters.ano} onChange={(e) => updateFilter('ano', e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--bg-color)', outline: 'none' }}>
+              <option value="">Todos os Anos</option>
+              {getUniqueValues('ano').map(v => <option key={v} value={v}>{v}</option>)}
+            </select>
+            <select className="filter-select" value={filters.banca} onChange={(e) => updateFilter('banca', e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--bg-color)', outline: 'none' }}>
+              <option value="">Todas as Bancas</option>
+              {getUniqueValues('banca').map(v => <option key={v} value={v}>{v}</option>)}
+            </select>
+            <select className="filter-select" value={filters.orgao} onChange={(e) => updateFilter('orgao', e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--bg-color)', outline: 'none', gridColumn: '1 / span 2' }}>
+              <option value="">Todos os Órgãos</option>
+              {getUniqueValues('orgao').map(v => <option key={v} value={v}>{v}</option>)}
+            </select>
+            <select className="filter-select" value={filters.cargo} onChange={(e) => updateFilter('cargo', e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--bg-color)', outline: 'none', gridColumn: '1 / span 2' }}>
+              <option value="">Todos os Cargos</option>
+              {getUniqueValues('cargo').map(v => <option key={v} value={v}>{v}</option>)}
+            </select>
+          </div>
+        </div>
+      )}
 
       {/* Questions Section Title */}
       <h3 style={{ marginTop: '10px', color: 'var(--text-dark)', fontSize: '1.2rem' }}>Questões Recentes</h3>
@@ -83,8 +131,14 @@ const HomeView = ({ questoes, loading, stats, onAnswer }) => {
               (q.cargo && q.cargo.includes(selectedCategory)) || 
               (q.disciplina && q.disciplina.includes(selectedCategory)) ||
               (q.orgao && q.orgao.includes(selectedCategory));
+
+            const advancedMatch = 
+              (!filters.ano || String(q.ano) === String(filters.ano)) &&
+              (!filters.banca || q.banca === filters.banca) &&
+              (!filters.orgao || q.orgao === filters.orgao) &&
+              (!filters.cargo || q.cargo === filters.cargo);
               
-            return textMatch && catMatch;
+            return textMatch && catMatch && advancedMatch;
           });
 
           if (filteredQuestoes.length === 0) {
